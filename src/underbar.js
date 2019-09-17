@@ -251,16 +251,14 @@
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj, ...objs) {
-  
-    // _.each(objs,function(object){
-    //   _.each(object,function(value,key){
-    //   if(!(_.contains(Object.keys(obj),key))){
-    //    obj[key] = value;
-    //   }
-    //     }
-    //   })
-    // })
-    // return obj;
+  _.each(objs, function(object){
+  _.each(object, function(value, key){
+    if(!_.contains(Object.keys(obj), key)){
+    obj[key] = value;
+    }
+  });
+  });
+  return obj;
   };
 
 
