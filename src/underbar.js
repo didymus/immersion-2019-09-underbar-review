@@ -377,7 +377,7 @@
   _.sortBy = function(collection, iterator) {
     return collection.sort(function(a, b){
       return (typeof iterator === 'string') ? a[iterator] - b[iterator] : iterator(a) - iterator(b)
-    })
+    });
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -386,6 +386,17 @@
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    let max = 0;
+    let result = new Array(max);
+
+    _.each(arguments, function(arg){
+      max = Math.max(arg.length, max);
+    });
+
+    for(let i = 0; i < max; i++){
+      result[i] = _.pluck(arguments, i);
+    } 
+    return result;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
@@ -393,16 +404,42 @@
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    let newArray = [];
+    _.each(nestedArray, function(e){
+    if(Array.isArray(e)){
+      newArray = newArray.concat(_.flatten(e));
+    } else {
+      newArray.push(e);
+    }
+    }); return newArray;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
-  _.intersection = function() {
+  _.intersection = function(...args) {
+    let newArray = [];
+    _.each(args[0], function(e){
+      let allContain = _.every(args, function(arg){
+      return _.contains(arg, e);
+    });
+      if(allContain){
+      newArray.push(e);
+    }
+  }); return newArray;
   };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
-  _.difference = function(array) {
+  _.difference = function(array, ...args) {
+    let newArray = [];
+    _.each(array, function(e){
+      let allContain = _.some(args, function(arg){
+        return _.contains(arg, e);
+      });
+      if(!allContain) {
+        newArray.push(e);
+      }
+    }); return newArray;
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
@@ -410,6 +447,16 @@
   // on this function.
   //
   // Note: This is difficult! It may take a while to implement.
-  _.throttle = function(func, wait) {
+  _.throttle = function(func, wait, ...args) {
+    let paused = false;
+    return function(){
+      if(!paused){
+        func(args);
+        paused = true;
+        setTimeout(function(){
+          paused = false;
+        }, wait);
+      }
+    }
   };
 }());
