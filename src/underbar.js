@@ -358,13 +358,26 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
-  };
+    console.log(functionOrKey);
+    return _.map(collection, function(value){
+    if(typeof functionOrKey === 'function'){
+    return functionOrKey.apply(value, args);
+    } else {
+    return value[functionOrKey](args);
+    }
+    });
+  }; // runs the specified method on each item in the array, 
+     // and returns a list of results
+     // AssertionError: expected [ Array(2) ] to deeply equal [ 'DOG', 'CAT' ]
 
   // Sort the object's values by a criterion produced by an iterator.
   // If iterator is a string, sort objects by that property with the name
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    return collection.sort(function(a, b){
+      return (typeof iterator === 'string') ? a[iterator] - b[iterator] : iterator(a) - iterator(b)
+    })
   };
 
   // Zip together two or more arrays with elements of the same index
